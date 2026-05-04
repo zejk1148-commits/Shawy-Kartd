@@ -1627,6 +1627,28 @@ setInterval(() => {
   }
   syncData();
 }, 30000);
+// كودك القديم فوق
+
+function openPopup(appName){
+  document.getElementById("buyPopup").style.display = "flex";
+  document.getElementById("popupTitle").innerText = appName;
+}
+
+function closePopup(){
+  document.getElementById("buyPopup").style.display = "none";
+}
+
+function confirmBuy(){
+  let id = document.getElementById("popupUserId").value;
+
+  if(!id){
+    alert("⚠️ لازم تدخل ID");
+    return;
+  }
+
+  alert("✅ تم (تجريبي)");
+  closePopup();
+}
 </script>
 <div id="buyPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
 
