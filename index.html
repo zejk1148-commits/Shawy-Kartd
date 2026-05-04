@@ -1687,22 +1687,27 @@ function openBuyPopup(i){
 
   let amount = parseFloat(document.getElementById("popupAmount").value) || 0;
 
-  if(!amount || amount <= 0){
+  let min = MIN_PURCHASE[selectedApp] || 1;
+
+  // 🔴 إذا أقل من الحد الأدنى
+  if (amount < min) {
+    document.getElementById("minwarning").style.display = "block";
+    document.getElementById("minwarning").innerText = " أقل كمية: " + min;
+
+    document.getElementById("popupTotal").value = "0.00";
+    document.getElementById("popupMainPrice").innerText = "$0.00";
+    return;
+  } else {
+    document.getElementById("minwarning").style.display = "none";
+  }
+
+  // 🔵 إذا الإدخال فاضي
+  if (!amount || amount <= 0){
     document.getElementById("popupTotal").value = "0.00";
     document.getElementById("popupMainPrice").innerText = "$0.00";
     return;
   }
-let min = MIN_PURCHASE[selectedApp] || 1;
 
-if (amount < min) {
-  document.getElementById("minwarning").style.display = "block";
-  document.getElementById("minwarning").innerText = " أقل كمية: " + min;
-
-  document.getElementById("popupTotal").value = "0.00";
-  document.getElementById("popupMainPrice").innerText = "$0.00";
-  return;
-}
-document.getElementById("minwarning").style.display = "none";
   let basePrice = appPrices[selectedApp];
 
   if (typeof basePrice === "object") {
@@ -1716,7 +1721,7 @@ document.getElementById("minwarning").style.display = "none";
 
   document.getElementById("popupTotal").value = total.toFixed(3);
   document.getElementById("popupMainPrice").innerText = "$" + total.toFixed(3);
-  } 
+  }
 </script>
 <div id="buyPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
 
