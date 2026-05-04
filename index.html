@@ -1649,7 +1649,14 @@ function confirmBuy(){
 
   alert("✅ تم (تجريبي)");
   closePopup();
-}
+function openBuyPopup(i){
+  alert("OK"); // اختبار
+
+  selectedApp = apps[i].name;
+
+  document.getElementById("buyPopup").style.display = "flex";
+  document.getElementById("popupTitle").innerText = apps[i].name;
+  }
 </script>
 <div id="buyPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
 
