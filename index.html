@@ -1694,13 +1694,16 @@ function openBuyPopup(i){
   }
 
   let min = MIN_PURCHASE[selectedApp] || 1;
-if (amount < min){
- document.getElementById("minwarning").style.display = "block";
-document.getElementById("popupTotal").value = "0.00";
-document.getElementById("popupMainPrice").innerText = "$0.00";
-return;
-} else {
-  document.getElementById("minWarning").style.display = "none";
+if (amount < min) {
+  document.getElementById("minwarning").style.display = "block";
+  document.getElementById("minwarning").innerText = "❌ أقل كمية: " + min;
+
+  document.getElementById("popupTotal").value = "0.00";
+  document.getElementById("popupMainPrice").innerText = "$0.00";
+  return;
+}
+
+document.getElementById("minwarning").style.display = "none";
 }
 
   let basePrice = appPrices[selectedApp];
