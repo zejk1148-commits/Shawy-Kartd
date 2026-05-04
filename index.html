@@ -1637,6 +1637,12 @@ function openPopup(appName){
 
 function closePopup(){
   document.getElementById("buyPopup").style.display = "none";
+
+  // تصفير القيم
+  document.getElementById("popupAmount").value = "";
+  document.getElementById("popupUserId").value = "";
+  document.getElementById("popupTotal").value = "";
+  document.getElementById("popupMainPrice").innerText = "$0.00";
 }
 
 function confirmBuy(){
@@ -1682,10 +1688,6 @@ function updatePopupPrice(){
   <div id="popupMainPrice" style="background:#0d6efd; color:white; padding:8px 15px; border-radius:20px;">
     $0.00
   </div>
-
-  <button onclick="closePopup()" style="background:red; color:white; border:none; border-radius:50%; width:35px; height:35px;">
-    ✕
-  </button>
 
     </div>
     <h3 id="popupTitle">اسم التطبيق</h3>
