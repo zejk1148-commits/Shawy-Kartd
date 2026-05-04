@@ -1692,17 +1692,16 @@ function openBuyPopup(i){
     document.getElementById("popupMainPrice").innerText = "$0.00";
     return;
   }
+let min = MIN_PURCHASE[selectedApp] || 1;
 
-  let min = MIN_PURCHASE[selectedApp] || 1;
 if (amount < min) {
   document.getElementById("minwarning").style.display = "block";
-  document.getElementById("minwarning").innerText = "❌ أقل كمية: " + min;
+  document.getElementById("minwarning").innerText = " أقل كمية: " + min;
 
   document.getElementById("popupTotal").value = "0.00";
   document.getElementById("popupMainPrice").innerText = "$0.00";
   return;
 }
-
 document.getElementById("minwarning").style.display = "none";
 }
 
