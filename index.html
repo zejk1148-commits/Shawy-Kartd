@@ -1690,7 +1690,8 @@ if (typeof basePrice === "object") {
 
 let discount = 0;
   
-let pricePerUnit = basePrice * (1 - discount);
+let qty = Object.keys(appPrices[selectedApp])[0];
+let pricePerUnit = (basePrice / qty) * (1 - discount);
 let total = amount * pricePerUnit;
   document.getElementById("popupTotal").value = total.toFixed(3);
   document.getElementById("popupMainPrice").innerText = "$" + total.toFixed(3);
