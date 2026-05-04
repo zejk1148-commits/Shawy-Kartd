@@ -1241,7 +1241,10 @@ function toggle(){
 function loadApps(){
   let html="";
   apps.forEach((app,i)=>{
-    html+=`<div class="card" onclick="openApp(${i})"><img src="${app.img}" alt="${app.name}"><div><strong>${app.name}</strong></div></div>`;
+  html += `<div class="card" onclick="openBuyPopup(${i})">
+  <img src="${app.img}" alt="${app.name}">
+  <div><strong>${app.name}</strong></div>
+</div>`;
   });
   document.getElementById("appsGrid").innerHTML=html;
 }
@@ -1255,8 +1258,6 @@ function openApp(i){
   document.getElementById("appPrice").innerText = "0.00";
 }
 async function buyApp(){
-
-  alert("دخلنا الدالة");
 
   let userId = document.getElementById("gameIdInput")?.value;
 
