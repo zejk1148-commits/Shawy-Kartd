@@ -1694,12 +1694,12 @@ function openBuyPopup(i){
   }
 
   let min = MIN_PURCHASE[selectedApp] || 1;
-
-  if (amount < min){
-    document.getElementById("popupTotal").value = "أقل شي: " + min;
-    document.getElementById("popupMainPrice").innerText = "$0.00";
-    return;
-  }
+if (amount < min){
+  document.getElementById("minWarning").style.display = "block";
+  document.getElementById("minWarning").innerText = "أقل كمية: " + min;
+} else {
+  document.getElementById("minWarning").style.display = "none";
+}
 
   let basePrice = appPrices[selectedApp];
 
@@ -1731,6 +1731,7 @@ function openBuyPopup(i){
 
     <div style="display:flex; gap:10px; margin:10px 0;">
       <input id="popupAmount" type="number" placeholder="العدد" style="width:50%; padding:10px;" oninput="updatePopupPrice()">
+      <div id="minWarning" style="color:red; font-size:13px; display:none;"></div>
       <input id="popupTotal" type="text" placeholder="السعر" disabled style="width:50%; padding:10px;">
     </div>
 
