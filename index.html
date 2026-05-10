@@ -480,14 +480,20 @@ height:80px;
     </div>
 </div>
 
+<div id="home" style="display:none; background: #0f0f0f; min-height: 100vh; font-family: sans-serif;">
+    <div class="header" style="background: linear-gradient(to bottom, #1a1a1a, #0f0f0f); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #d4af37; position: sticky; top: 0; z-index: 100;">
+        <div onclick="toggleSidebar()" style="cursor:pointer; color:#d4af37; font-size:24px;">☰</div>
+        <div id="balanceText" style="background: rgba(212, 175, 55, 0.1); padding: 8px 15px; border-radius: 20px; border: 1px solid #d4af37; color: #d4af37; font-weight: bold; font-size: 14px;">
+            الرصيد: <span style="color: #fff;">$0.00</span>
+        </div>
+    </div>
 
-<div id="home" style="display:none">
-<div class="header">
-<div onclick="toggle()" style="cursor:pointer;font-size:20px;">☰</div>
-<div id="balanceText">الرصيد: $0.00</div>
+    <div style="padding: 20px;">
+        <div class="grid" id="appsGrid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;">
+            </div>
+    </div>
 </div>
-<div class="grid" id="appsGrid"></div>
-</div>
+
 
 <div id="adminPage" style="display:none;">
 <div class="header">
