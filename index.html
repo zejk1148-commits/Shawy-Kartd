@@ -447,32 +447,39 @@ height:80px;
 
 <div id="overlay"></div>
 
-<div id="loginPage" class="auth-container">
-<div class="auth-box">
-<h2>🔐 تسجيل الدخول</h2>
-<input id="emailInput" type="email" placeholder="ادخل ايميلك">
-<input type="password" id="passwordInput" placeholder="كلمة المرور">
-<button onclick="login()">دخول</button>
-<div class="auth-link">
-ما عندك حساب؟
-<span onclick="openRegister()">إنشاء حساب جديد</span>
-</div>
-</div>
+<div id="loginPage" class="auth-container" style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%); font-family: sans-serif; color: #fff;">
+    <div class="auth-box" style="width: 90%; max-width: 380px; background: rgba(25, 25, 25, 0.9); padding: 40px 25px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.8); border: 1.5px solid #d4af37; text-align: center; backdrop-filter: blur(10px);">
+        <div style="font-size: 45px; margin-bottom: 10px;">🔐</div>
+        <h2 style="color: #d4af37; margin-bottom: 30px; font-weight: bold; letter-spacing: 1px;">تسجيل الدخول</h2>
+        <div style="margin-bottom: 20px;">
+            <input type="email" id="emailInput" placeholder="ادخل ايميلك" style="width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #333; background: #111; color: #fff; outline: none; text-align: right; box-sizing: border-box;">
+        </div>
+        <div style="margin-bottom: 30px;">
+            <input type="password" id="passwordInput" placeholder="كلمة المرور" style="width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #333; background: #111; color: #fff; outline: none; text-align: right; box-sizing: border-box;">
+        </div>
+        <button onclick="login()" style="width: 100%; padding: 16px; border-radius: 12px; border: none; background: linear-gradient(45deg, #d4af37, #f2d06b); color: #000; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);">دخول</button>
+        <div style="margin-top: 25px; font-size: 14px; color: #aaa;">ما عندك حساب؟ <span onclick="openRegister()" style="color: #d4af37; cursor: pointer; font-weight: bold; margin-right: 5px;">إنشاء حساب جديد</span></div>
+    </div>
 </div>
 
-<div id="registerPage" class="auth-container" style="display:none;">
-<div class="auth-box">
-<h2>✍️ إنشاء حساب جديد</h2>
-<input id="regEmail" type="email" placeholder="ادخل ايميلك">
-<input type="password" id="regPassword" placeholder="كلمة المرور">
-<input type="password" id="regPasswordConfirm" placeholder="تأكيد كلمة المرور">
-<button onclick="register()">إنشاء حساب</button>
-<div class="auth-link">
-عندك حساب؟
-<span onclick="goToLogin()">تسجيل الدخول</span>
+<div id="registerPage" class="auth-container" style="display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: radial-gradient(circle at center, #1a1a1a 0%, #000 100%); font-family: sans-serif; color: #fff;">
+    <div class="auth-box" style="width: 90%; max-width: 380px; background: rgba(25, 25, 25, 0.9); padding: 40px 25px; border-radius: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.8); border: 1.5px solid #d4af37; text-align: center; backdrop-filter: blur(10px);">
+        <div style="font-size: 45px; margin-bottom: 10px;">✨</div>
+        <h2 style="color: #d4af37; margin-bottom: 30px; font-weight: bold; letter-spacing: 1px;">إنشاء حساب جديد</h2>
+        <div style="margin-bottom: 15px;">
+            <input type="email" id="regEmail" placeholder="ادخل ايميلك" style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #333; background: #111; color: #fff; outline: none; text-align: right; box-sizing: border-box;">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <input type="password" id="regPassword" placeholder="كلمة المرور" style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #333; background: #111; color: #fff; outline: none; text-align: right; box-sizing: border-box;">
+        </div>
+        <div style="margin-bottom: 25px;">
+            <input type="password" id="regPasswordConfirm" placeholder="تأكيد كلمة المرور" style="width: 100%; padding: 14px; border-radius: 12px; border: 1px solid #333; background: #111; color: #fff; outline: none; text-align: right; box-sizing: border-box;">
+        </div>
+        <button onclick="register()" style="width: 100%; padding: 16px; border-radius: 12px; border: none; background: linear-gradient(45deg, #d4af37, #f2d06b); color: #000; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);">إنشاء حساب</button>
+        <div style="margin-top: 25px; font-size: 14px; color: #aaa;">عندك حساب؟ <span onclick="goToLogin()" style="color: #d4af37; cursor: pointer; font-weight: bold; margin-right: 5px;">تسجيل الدخول</span></div>
+    </div>
 </div>
-</div>
-</div>
+
 
 <div id="home" style="display:none">
 <div class="header">
