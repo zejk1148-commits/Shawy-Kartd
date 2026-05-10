@@ -1674,39 +1674,22 @@ setInterval(() => {
   }
   syncData();
 }, 30000);
-// كودك القديم فوق
-function openPopup(appName){
-  selectedApp = appName;
-  document.getElementById("buyPopup").style.display = "flex";
-  document.getElementById("popupTitle").innerText = appName;
-}
-
-function closePopup(){
-  document.getElementById("buyPopup").style.display = "none";
-  document.getElementById("popupAmount").value = "";
-  document.getElementById("popupUserId").value = "";
-  document.getElementById("popupTotal").value = "";
-  document.getElementById("popupMainPrice").innerText = "$0.00";
-}
-
-function confirmBuy() {
-  let id = document.getElementById("popupUserId").value;
-  if (!id) {
-    alert("⚠️ اللاعب ID لازم تدخل");
-    return;
-  }
-  if (typeof confirmBuyReal === "function") {
-    confirmBuyReal();
-  } else {
-    alert("تم استلام طلبك");
-    closePopup();
-  }
-}
-
 function openBuyPopup(i) {
+  if (!apps[i]) return;
   selectedApp = apps[i].name;
-  document.getElementById("buyPopup").style.display = "flex";
-  document.getElementById("popupTitle").innerText = apps[i].name;
+  const popup = document.getElementById("buyPopup");
+  if (popup) {
+    popup.style.display = "flex";
+    document.getElementById("popupTitle").innerText = selectedApp;
+    document.getElementById("popupAmount").value = "";
+    document.getElementById("popupTotal").value = "0.00";
+    document.getElementById("popupMainPrice").innerText = "$0.00";
+  }
+}
+
+function closePopup() {
+  const popup = document.getElementById("buyPopup");
+  if (popup) popup.style.display = "none";
 }
 
 function updatePopupPrice() {
@@ -1725,7 +1708,8 @@ function updatePopupPrice() {
     return;
   }
 
-  let min = MIN_PURCHASE[selectedApp] || 1;
+  let min = (typeof MIN_PURCHASE !== 'undefined' && MIN_PURCHASE[selectedApp]) ? MIN_PURCHASE[selectedApp] : 1;
+  
   if (amount < min) {
     if (minWarning) {
       minWarning.style.display = "block";
@@ -1738,8 +1722,8 @@ function updatePopupPrice() {
     if (minWarning) minWarning.style.display = "none";
   }
 
-  let priceData = appPrices[selectedApp];
-  if (priceData) {
+  if (typeof appPrices !== 'undefined' && appPrices[selectedApp]) {
+    let priceData = appPrices[selectedApp];
     let baseQty = Object.keys(priceData)[0]; 
     let basePrice = priceData[baseQty];
     let finalPrice = (amount / baseQty) * basePrice;
@@ -1747,50 +1731,55 @@ function updatePopupPrice() {
     if (priceText) priceText.innerText = "$" + finalPrice.toFixed(2);
   }
 }
+
+function confirmBuy() {
+  let id = document.getElementById("popupUserId").value;
+  if (!id) {
+    alert("⚠️ لازم تدخل ID اللاعب");
+    return;
+  }
+  // استدعاء دالة الشراء الحقيقية confirmBuyReal
+  if (typeof confirmBuyReal === "function") {
+    confirmBuyReal();
+  } else {
+    alert("✅ تم استلام طلبك");
+    closePopup();
+  }
+}
 </script>
-<div id="buyPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; justify-content:center; align-items:center; backdrop-filter: blur(8px); font-family: sans-serif;">
-  <div style="width:92%; max-width:380px; background:#1a1a1a; border-radius:25px; padding:25px; text-align:center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1.5px solid #d4af37; position: relative;">
+
+<div id="buyPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10000; justify-content:center; align-items:center; backdrop-filter: blur(8px); direction: rtl; font-family: sans-serif;">
+  <div style="width:90%; max-width:380px; background:#1a1a1a; border-radius:20px; padding:25px; text-align:center; border: 1.5px solid #d4af37; color: white; box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);">
     
-    <div style="position: absolute; top: 0; right: 0; background: linear-gradient(135deg, #d4af37, #b8860b); color: #000; padding: 8px 20px; border-bottom-left-radius: 20px; font-weight: bold; font-size: 16px;">
+    <div style="background: linear-gradient(135deg, #d4af37, #b8860b); color: #000; padding: 6px 18px; border-radius: 12px; display: inline-block; margin-bottom: 15px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
       <span id="popupMainPrice">$0.00</span>
     </div>
 
-    <h2 id="popupTitle" style="margin: 15px 0 25px 0; color:#d4af37; font-size: 22px; letter-spacing: 1px;">اسم المنتج</h2>
+    <h2 id="popupTitle" style="color:#d4af37; font-size: 20px; margin-bottom: 20px; text-shadow: 0 0 5px rgba(212, 175, 55, 0.3);">اسم المنتج</h2>
 
-    <div style="display: flex; gap: 12px; margin-bottom: 15px;">
+    <div style="display: flex; gap: 10px; margin-bottom: 15px;">
       <div style="flex: 1;">
-        <label style="display:block; font-size: 11px; color: #888; margin-bottom: 5px; text-align: right;">الكمية</label>
-        <input type="number" id="popupAmount" oninput="updatePopupPrice()" placeholder="0" 
-               style="width:100%; padding:12px; border:1px solid #333; border-radius:12px; background:#252525; color:#fff; outline:none; text-align:center; font-weight:bold; border-bottom: 2px solid #d4af37;">
+        <label style="display:block; font-size: 11px; color: #aaa; text-align: right; margin-bottom: 5px;">الكمية</label>
+        <input type="number" id="popupAmount" oninput="updatePopupPrice()" style="width:100%; padding:12px; background:#252525; border:1px solid #333; color:white; border-radius:10px; border-bottom: 2px solid #d4af37; outline: none; text-align: center;">
       </div>
       <div style="flex: 1;">
-        <label style="display:block; font-size: 11px; color: #888; margin-bottom: 5px; text-align: right;">الإجمالي</label>
-        <input type="text" id="popupTotal" readonly placeholder="0.00" 
-               style="width:100%; padding:12px; border:1px solid #333; border-radius:12px; background:#252525; color:#d4af37; text-align:center; font-weight:bold;">
+        <label style="display:block; font-size: 11px; color: #aaa; text-align: right; margin-bottom: 5px;">الإجمالي ($)</label>
+        <input type="text" id="popupTotal" readonly style="width:100%; padding:12px; background:#252525; border:1px solid #333; color:#d4af37; border-radius:10px; text-align:center; font-weight: bold;">
       </div>
     </div>
 
     <div style="margin-bottom: 20px;">
-      <label style="display:block; font-size: 11px; color: #888; margin-bottom: 5px; text-align: right;">معرف اللاعب (ID)</label>
-      <input type="text" id="popupUserId" placeholder="أدخل الآيدي هنا" 
-             style="width:100%; padding:14px; border:1px solid #333; border-radius:12px; background:#252525; color:#fff; outline:none; text-align:center;">
-      <p id="minwarning" style="color:#ff4d4d; font-size:11px; margin-top:5px; display:none;"></p>
+        <label style="display:block; font-size: 11px; color: #aaa; text-align: right; margin-bottom: 5px;">معرف اللاعب (ID)</label>
+        <input type="text" id="popupUserId" placeholder="أدخل ID هنا" style="width:100%; padding:14px; background:#252525; border:1px solid #333; color:white; border-radius:10px; text-align:center; outline: none;">
+        <p id="minwarning" style="color:#ff4d4d; font-size:11px; display:none; margin-top: 8px;"></p>
     </div>
 
     <div style="display: flex; gap: 10px;">
-      <button onclick="confirmBuy()" 
-              style="flex: 2; background: linear-gradient(to right, #d4af37, #f2d06b); color:#000; border:none; padding:14px; border-radius:12px; font-size:16px; font-weight:bold; cursor:pointer; transition:0.3s; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);">
-        تأكيد الطلب
-      </button>
-      <button onclick="closePopup()" 
-              style="flex: 1; background: #333; color:#aaa; border:none; padding:14px; border-radius:12px; font-size:14px; cursor:pointer;">
-        إلغاء
-      </button>
+      <button onclick="confirmBuy()" style="flex: 2; background: linear-gradient(to right, #d4af37, #f2d06b); color: black; border: none; padding: 14px; border-radius: 12px; font-weight: bold; cursor: pointer; transition: 0.3s;">تأكيد الطلب</button>
+      <button onclick="closePopup()" style="flex: 1; background: #333; color: #aaa; border: none; padding: 14px; border-radius: 12px; cursor: pointer;">إلغاء</button>
     </div>
   </div>
 </div>
-
-</div>
 </body>
-  </html>
+</html>
 
