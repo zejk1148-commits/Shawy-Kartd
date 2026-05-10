@@ -190,118 +190,118 @@ border:1px solid #ddd;
 border-radius:5px;
 }
 
-.auth-container {
-display:flex;
-flex-direction:column;
+}
+
+
 justify-content:center;
 align-items:center;
 height:100vh;
 width:100vw;
 background: linear-gradient(to bottom, #2ecc71, #27ae60);
 position:fixed;
-top:0;
-left:0;
-right:0;
-bottom:0;
+أعلى: 0؛
+اليسار: 0؛
+يمين: 0؛
+أسفل: 0؛
 z-index:1000;
 overflow:hidden;
 margin:0;
-padding:0;
+الحشو: 0؛
 }
 
 .auth-box {
-background:white;
-padding:30px;
+الخلفية: بيضاء؛
+الحشو: 30 بكسل؛
 border-radius:15px;
 box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-width:90%;
-max-width:350px;
+العرض: 90%؛
+الحد الأقصى للعرض: 350 بكسل؛
 }
 
 .auth-box h2 {
 text-align:center;
-color:#2ecc71;
+اللون: #2ecc71؛
 margin-bottom:20px;
 }
 
 .auth-box input {
-width:95%;
+العرض: 95%؛
 margin:10px auto;
-padding:10px;
+الحشو: 10 بكسل؛
 border:1px solid #ddd;
 border-radius:6px;
-font-size:14px;
+حجم الخط: 14 بكسل؛
 box-sizing:border-box;
 }
 
-.auth-box button {
-width:100%;
+زر مربع المصادقة {
+العرض: 100%؛
 margin-top:15px;
-padding:10px;
-background:#2ecc71;
-color:white;
+الحشو: 10 بكسل؛
+الخلفية: #2ecc71؛
+اللون: أبيض؛
 border:none;
 border-radius:6px;
-cursor:pointer;
-font-size:16px;
+المؤشر: مؤشر؛
+حجم الخط: 16 بكسل؛
 }
 
-.auth-box button:hover {
-background:#27ae60;
+زر مربع المصادقة: عند تمرير المؤشر فوقه {
+الخلفية: #27ae60؛
 }
 
 .auth-link {
 text-align:center;
 margin-top:15px;
-font-size:14px;
+حجم الخط: 14 بكسل؛
 }
 
 .auth-link span {
-color:#2ecc71;
-cursor:pointer;
+اللون: #2ecc71؛
+المؤشر: مؤشر؛
 text-decoration:underline;
-font-weight:bold;
+وزن الخط: عريض؛
 }
 
 .auth-link span:hover {
-color:#27ae60;
+اللون: #27ae60؛
 }
 
-#adminPage {
-width: 100%;
-margin: 0;
-padding: 0;
-display: flex;
-flex-direction: column;
+صفحة الإدارة {
+العرض: 100%؛
+الهامش: 0؛
+الحشو: 0؛
+العرض: مرن؛
+اتجاه المرونة: عمود؛
 }
 
 .admin-panel {
 display:grid;
 grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
-gap:15px;
-padding:20px;
-width: 100%;
-max-width: 100%;
+الفجوة: 15 بكسل؛
+الحشو: 20 بكسل؛
+العرض: 100%؛
+الحد الأقصى للعرض: 100%؛
 }
 
 .admin-card {
-background:white;
-padding:20px;
+الخلفية: بيضاء؛
+الحشو: 20 بكسل؛
 border-radius:10px;
 box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 text-align:center;
 }
 
 .admin-card h3 {
-color:#2ecc71;
+اللون: #2ecc71؛
 margin:10px 0;
 }
 
 .admin-table {
-width:100%;
+العرض: 100%؛
 border-collapse:collapse;
 margin-top:10px;
-background:white;
+الوضع: ثابت؛
 overflow-x: auto;
 }
 
@@ -1735,33 +1735,47 @@ function openBuyPopup(i){
 }
 
 </script>
-<div id="buyPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+<div id="buyPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; justify-content:center; align-items:center; backdrop-filter: blur(8px); font-family: sans-serif;">
+  <div style="width:92%; max-width:380px; background:#1a1a1a; border-radius:25px; padding:25px; text-align:center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1.5px solid #d4af37; position: relative;">
+    
+    <div style="position: absolute; top: 0; right: 0; background: linear-gradient(135deg, #d4af37, #b8860b); color: #000; padding: 8px 20px; border-bottom-left-radius: 20px; font-weight: bold; font-size: 16px;">
+      <span id="popupMainPrice">$0.00</span>
+    </div>
 
-  <div style="width:90%; max-width:400px; background:white; border-radius:20px; padding:20px; text-align:center;">
+    <h2 id="popupTitle" style="margin: 15px 0 25px 0; color:#d4af37; font-size: 22px; letter-spacing: 1px;">اسم المنتج</h2>
 
-    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+    <div style="display: flex; gap: 12px; margin-bottom: 15px;">
+      <div style="flex: 1;">
+        <label style="display:block; font-size: 11px; color: #888; margin-bottom: 5px; text-align: right;">الكمية</label>
+        <input type="number" id="popupAmount" oninput="updatePopupPrice()" placeholder="0" 
+               style="width:100%; padding:12px; border:1px solid #333; border-radius:12px; background:#252525; color:#fff; outline:none; text-align:center; font-weight:bold; border-bottom: 2px solid #d4af37;">
+      </div>
+      <div style="flex: 1;">
+        <label style="display:block; font-size: 11px; color: #888; margin-bottom: 5px; text-align: right;">الإجمالي</label>
+        <input type="text" id="popupTotal" readonly placeholder="0.00" 
+               style="width:100%; padding:12px; border:1px solid #333; border-radius:12px; background:#252525; color:#d4af37; text-align:center; font-weight:bold;">
+      </div>
+    </div>
 
-  <div id="popupMainPrice" style="background:#0d6efd; color:white; padding:8px 15px; border-radius:20px;">
-    $0.00
+    <div style="margin-bottom: 20px;">
+      <label style="display:block; font-size: 11px; color: #888; margin-bottom: 5px; text-align: right;">معرف اللاعب (ID)</label>
+      <input type="text" id="popupUserId" placeholder="أدخل الآيدي هنا" 
+             style="width:100%; padding:14px; border:1px solid #333; border-radius:12px; background:#252525; color:#fff; outline:none; text-align:center;">
+      <p id="minwarning" style="color:#ff4d4d; font-size:11px; margin-top:5px; display:none;"></p>
+    </div>
+
+    <div style="display: flex; gap: 10px;">
+      <button onclick="confirmBuy()" 
+              style="flex: 2; background: linear-gradient(to right, #d4af37, #f2d06b); color:#000; border:none; padding:14px; border-radius:12px; font-size:16px; font-weight:bold; cursor:pointer; transition:0.3s; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);">
+        تأكيد الطلب
+      </button>
+      <button onclick="closePopup()" 
+              style="flex: 1; background: #333; color:#aaa; border:none; padding:14px; border-radius:12px; font-size:14px; cursor:pointer;">
+        إلغاء
+      </button>
+    </div>
   </div>
-
-    </div>
-    <h3 id="popupTitle">اسم التطبيق</h3>
-
-    <div style="display:flex; gap:10px; margin:10px 0;">
-      <input id="popupAmount" type="number" placeholder="العدد" style="width:50%; padding:10px;" oninput="updatePopupPrice()">
-      <div id="minWarning" style="color:red; font-size:13px; display:none;"></div>
-      <input id="popupTotal" type="text" placeholder="السعر" disabled style="width:50%; padding:10px;">
-    </div>
-
-    <input id="popupUserId" placeholder="ID المستخدم" style="width:100%; padding:10px; margin-bottom:10px;">
-
-    <div style="display:flex; gap:10px;">
-      <button onclick="closePopup()" style="width:50%;">إلغاء</button>
-      <button onclick="confirmBuy()" style="width:50%;">شراء</button>
-    </div>
-
-  </div>
+</div>
 
 </div>
 </body>
