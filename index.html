@@ -1648,48 +1648,49 @@ setInterval(() => {
   syncData();
 }, 30000);
 // كودك القديم فوق
-
 function openPopup(appName){
+  selectedApp = appName;
   document.getElementById("buyPopup").style.display = "flex";
   document.getElementById("popupTitle").innerText = appName;
 }
 
 function closePopup(){
   document.getElementById("buyPopup").style.display = "none";
-
-  // تصفير القيم
   document.getElementById("popupAmount").value = "";
   document.getElementById("popupUserId").value = "";
   document.getElementById("popupTotal").value = "";
   document.getElementById("popupMainPrice").innerText = "$0.00";
 }
 
-function confirmBuy(){
+function confirmBuy() {
   let id = document.getElementById("popupUserId").value;
-
-  if(!id){
-    alert("⚠️ لازم تدخل ID");
+  if (!id) {
+    alert("⚠️ اللاعب ID لازم تدخل");
     return;
   }
-function openBuyPopup(i){
-    alert("OK"); // اختبار
+  if (typeof confirmBuyReal === "function") {
+    confirmBuyReal();
+  } else {
+    alert("تم استلام طلبك");
+    closePopup();
+  }
+}
 
-    selectedApp = apps[i].name;
+function openBuyPopup(i) {
+  selectedApp = apps[i].name;
+  document.getElementById("buyPopup").style.display = "flex";
+  document.getElementById("popupTitle").innerText = apps[i].name;
+}
 
-    document.getElementById("buyPopup").style.display = "flex";
-    document.getElementById("popupTitle").innerText = apps[i].name;
-  } 
-  function updatePopupPrice() {
+function updatePopupPrice() {
   const amountInput = document.getElementById("popupAmount");
   const priceInput = document.getElementById("popupTotal");
   const priceText = document.getElementById("popupMainPrice");
   const minWarning = document.getElementById("minwarning");
 
   if (!amountInput || !priceInput) return;
-
   let amount = parseFloat(amountInput.value);
   
-  // 1. التحقق من وجود إدخال
   if (!amount || amount <= 0) {
     priceInput.value = "0.00";
     if (priceText) priceText.innerText = "$0.00";
@@ -1698,12 +1699,10 @@ function openBuyPopup(i){
   }
 
   let min = MIN_PURCHASE[selectedApp] || 1;
-
-  // 2. التحقق من الحد الأدنى للكمية
   if (amount < min) {
     if (minWarning) {
       minWarning.style.display = "block";
-      minWarning.innerText = "أقل كمية لهذا التطبيق هي: " + min;
+      minWarning.innerText = "أقل كمية هي: " + min;
     }
     priceInput.value = "0.00";
     if (priceText) priceText.innerText = "$0.00";
@@ -1712,24 +1711,15 @@ function openBuyPopup(i){
     if (minWarning) minWarning.style.display = "none";
   }
 
-  // 3. حساب السعر بناءً على مصفوفة الأسعار (appPrices)
   let priceData = appPrices[selectedApp];
-  let finalPrice = 0;
-
   if (priceData) {
-    // نجلب أول مفتاح في المصفوفة (مثل 1000 أو 8000)
     let baseQty = Object.keys(priceData)[0]; 
     let basePrice = priceData[baseQty];
-    
-    // المعادلة: (الكمية المطلوبة ÷ الكمية المرجعية) × السعر المرجعي
-    finalPrice = (amount / baseQty) * basePrice;
+    let finalPrice = (amount / baseQty) * basePrice;
+    priceInput.value = finalPrice.toFixed(2);
+    if (priceText) priceText.innerText = "$" + finalPrice.toFixed(2);
   }
-
-  // 4. عرض السعر
-  priceInput.value = finalPrice.toFixed(2);
-  if (priceText) priceText.innerText = "$" + finalPrice.toFixed(2);
 }
-
 </script>
 <div id="buyPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; justify-content:center; align-items:center; backdrop-filter: blur(8px); font-family: sans-serif;">
   <div style="width:92%; max-width:380px; background:#1a1a1a; border-radius:25px; padding:25px; text-align:center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); border: 1.5px solid #d4af37; position: relative;">
