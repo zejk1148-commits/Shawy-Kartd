@@ -1649,9 +1649,19 @@ document.addEventListener('DOMContentLoaded', function(){
     overlay.onclick=()=>{
       sidebar.classList.remove("open");
       overlay.style.display="none";
-    };
-  }
-});
+    
+function toggleSidebar() {
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("overlay");
+    
+    sidebar.classList.toggle("open");
+    
+    if (sidebar.classList.contains("open")) {
+        overlay.style.display = "block";
+    } else {
+        overlay.style.display = "none";
+    }
+}
 
 setInterval(() => {
   let ordersPage = document.getElementById("ordersPage");
