@@ -1797,6 +1797,210 @@ function confirmBuy() {
     closePopup();
   }
 }
+  let apps = []; // مصفوفة المنتجات المسحوبة من سوبابيس
+let selectedAppIndex = null;
+
+// 1. جلب المنتجات (الحزم) من قاعدة البيانات وعرضها بالمتجر ديناميكياً
+async function fetchAppsFromDatabase() {
+    try {
+        const { data, error } = await supabase
+            .from('apps')
+            .select('*')
+            .order('id', { ascending: true });
+
+        if (error) throw error;
+
+        if (data) {
+            apps = data;
+            renderStoreApps();
+        }
+    } catch (err) {
+        console.error("❌ فشل جلب الحزم للمتجر:", err);
+    }
+}
+
+// 2. بناء كروت المتجر الفخمة وإظهار اسم الحزمة وسعرها والكمية
+function renderStoreApps() {
+    const container = document.getElementById("appsGrid"); // المعرف المعتمد عندك في السطر 492
+    if (!container) return;
+
+    if (apps.length === 0) {
+        container.innerHTML = `<p style="color: #aaa; grid-column: span 2; text-align: center; padding: 20px;">لا يوجد حزم معروضة حالياً.</p>`;
+        return;
+    }
+
+    container.innerHTML = apps.map((app, index) => `
+        <div class="card" style="background: #111; border: 1px solid #d4af37; border-radius: 15px; padding: 15px; text-align: center; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+            <div style="position: absolute; top: 10px; right: 10px; background: #b8860b; color: black; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: bold;">
+                $${parseFloat(app.price).toFixed(2)}
+            </div>
+            <img src="${app.image_url}" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover; margin-bottom: 10px; border: 1px solid #333;">
+            <h3 style="color: #d4af37; font-size: 16px; margin: 5px 0 5px 0;">${app.name}</h3>
+            <p style="color: #aaa; font-size: 13px; margin-bottom: 15px;">الكمية الأساسية: ${app.quantity || 1}</p>
+            <button onclick="openBuyPopup(${index})" style="width: 100%; background: linear-gradient(to right, #d4af37, #f2d06b); color: black; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer;">
+                اشحن الآن ✨
+            </button>
+        </div>
+    `).join('');
+}
+
+// 3. فتح نافذة الشراء المنبثقة وتجهيز الحسابات التلقائية بناءً على المنتج المختار
+function openBuyPopup(index) {
+    selectedAppIndex = index;
+    const app = apps[index];
+    
+    // ربط العناصر الحالية في صفحة الشراء (الأسطر 574 وما بعدها)
+    const titleElement = document.getElementById("title"); 
+    const amountInput = document.getElementById("appAmount"); 
+    const priceDisplay = document.getElementById("appPrice"); 
+
+    if (titleElement) {
+        titleElement.innerText = `${app.name} (${app.quantity || 1})`;
+    }
+    
+    if (amountInput) {
+        amountInput.value = 1; // تعيين العدد الافتراضي عند الفتح ليكون طلب واحد
+    }
+
+    calculateAppPrice(); // تشغيل دالة الحساب الفوري للسعر عند الفتح
+
+    // تنقل الصفحات المعتمد بموقعك لإظهار صفحة الشراء
+    const homePage = document.getElementById("home");
+    const appPage = document.getElementById("appPage");
+    if (homePage) homePage.style.display = "none";
+    if (appPage) appPage.style.display = "block"; 
+}
+
+// 4. دالة الحساب التلقائي والذكي للسعر بناءً على العدد المطلوب
+function calculateAppPrice() {
+    if (selectedAppIndex === null) return;
+    
+    const app = apps[selectedAppIndex];
+    const amountInput = document.getElementById("appAmount");
+    const priceDisplay = document.getElementById("appPrice");
+
+    if (!amountInput || !priceDisplay) return;
+
+    let count = parseInt(amountInput.value);
+    if (isNaN(count) || count < 1) {
+        count = 1;
+    }
+
+    // حساب السعر الإجمالي = السعر من سوبابيس × عدد المرات المطلوبة
+    const totalPrice = app.price * count;
+    priceDisplay.innerText = totalPrice.toFixed(2);
+}
+
+// 5. جلب وعرض التطبيقات داخل جدول لوحة الآدمن (محدث بالكمية)
+async function loadAdminApps() {
+    const tableBody = document.getElementById("adminAppsTableBody");
+    if (!tableBody) return;
+
+    const { data: adminApps, error } = await supabase
+        .from('apps')
+        .select('*')
+        .order('id', { ascending: false });
+
+    if (error) {
+        console.error("خطأ في جلب تطبيقات الآدمن:", error);
+        return;
+    }
+
+    tableBody.innerHTML = adminApps.map(app => `
+        <tr style="border-bottom: 1px solid #222; color: white;">
+            <td style="padding: 12px;"><img src="${app.image_url}" style="width:45px; height:45px; border-radius:8px; object-fit:cover; border: 1px solid #d4af37;"></td>
+            <td style="padding: 12px; font-weight: bold; text-align: right;">${app.name}</td>
+            <td style="padding: 12px; text-align: right; color: #00ffcc;">${app.quantity || 1}</td>
+            <td style="padding: 12px; color: #d4af37; font-weight: bold; text-align: right;">$${parseFloat(app.price).toFixed(2)}</td>
+            <td style="padding: 12px; text-align: center;">
+                <button onclick="deleteApp(${app.id})" style="background:#ff4d4d; color:white; border:none; padding:6px 14px; border-radius:6px; cursor:pointer; font-weight:bold;">❌ حذف</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// 6. رفع الصورة وحفظ بيانات التطبيق والكمية في سوبابيس
+async function addNewApp() {
+    const name = document.getElementById("newAppName").value.trim();
+    const quantity = parseFloat(document.getElementById("newAppQuantity").value);
+    const price = parseFloat(document.getElementById("newAppPrice").value);
+    const imageFile = document.getElementById("newAppImage").files[0];
+
+    if (!name || isNaN(quantity) || isNaN(price) || !imageFile) {
+        alert("⚠️ يرجى تعبئة كافة الحقول (الاسم، الكمية، السعر، واختيار الصورة).");
+        return;
+    }
+
+    try {
+        const fileExt = imageFile.name.split('.').pop();
+        const fileName = `app_${Date.now()}.${fileExt}`;
+        const filePath = `apps_logos/${fileName}`;
+
+        let { error: uploadError } = await supabase.storage
+            .from('signatures') 
+            .upload(filePath, imageFile);
+
+        if (uploadError) throw uploadError;
+
+        const { data: urlData } = supabase.storage
+            .from('signatures')
+            .getPublicUrl(filePath);
+
+        const imageUrl = urlData.publicUrl;
+
+        // إدخال السجل الجديد متضمناً الكمية الجديدة
+        const { error: insertError } = await supabase
+            .from('apps')
+            .insert([{ name: name, quantity: quantity, price: price, image_url: imageUrl }]);
+
+        if (insertError) throw insertError;
+
+        alert("✅ تم إضافة الحزمة بنجاح وربطها بالمتجر!");
+        
+        document.getElementById("newAppName").value = "";
+        document.getElementById("newAppQuantity").value = "";
+        document.getElementById("newAppPrice").value = "";
+        document.getElementById("newAppImage").value = "";
+        
+        loadAdminApps();
+        fetchAppsFromDatabase(); // تحديث كروت المتجر فوراً
+
+    } catch (error) {
+        console.error("عطل بالرفع والإضافة:", error);
+        alert("⚠️ واجهنا مشكلة أثناء معالجة الطلب.");
+    }
+}
+
+// 7. حذف التطبيق نهائياً
+async function deleteApp(id) {
+    if (!confirm("هل أنت متأكد من رغبتك في مسح هذا التطبيق من قاعدة البيانات؟")) return;
+
+    try {
+        const { error } = await supabase
+            .from('apps')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+
+        alert("✅ تم الحذف بنجاح.");
+        loadAdminApps();
+        fetchAppsFromDatabase(); 
+    } catch (error) {
+        console.error("عطل بالحذف:", error);
+        alert("⚠️ تعذر حذف التطبيق.");
+    }
+}
+
+// تشغيل جلب البيانات للمتجر والآدمن تلقائياً عند تحميل الصفحة
+document.addEventListener('DOMContentLoaded', () => {
+    if (typeof initSupabase === "function") initSupabase();
+    setTimeout(() => {
+        fetchAppsFromDatabase();
+        loadAdminApps();
+    }, 1200);
+});
+
 </script>
 
 <div id="buyPopup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:10000; justify-content:center; align-items:center; backdrop-filter: blur(8px); direction: rtl; font-family: sans-serif;">
