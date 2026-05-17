@@ -1604,8 +1604,7 @@ async function loadPayments(){
     console.error("خطأ في تحميل الدفعات:", error);
   }
 }
-
-function sendToTelegram(text){
+  function sendToTelegram(text){
   const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
   
   fetch(url, {
@@ -1628,10 +1627,10 @@ function sendToTelegram(text){
 }
 
 document.addEventListener('DOMContentLoaded', function(){
-  initSupabase();
-  if(document.getElementById("successPopup")) {
-     document.getElementById("successPopup").style.display="none";
-  }
+  if (typeof initSupabase === "function") initSupabase();
+  
+  const successPopup = document.getElementById("successPopup");
+  if(successPopup) successPopup.style.display="none";
   
   ['sypImage', 'usdImage', 'bankImage'].forEach(id => {
     let element = document.getElementById(id);
@@ -1645,26 +1644,28 @@ document.addEventListener('DOMContentLoaded', function(){
     }
   });
   
-  let overlay=document.getElementById("overlay");
-  let sidebar=document.getElementById("sidebar");
+  let overlay = document.getElementById("overlay");
+  let sidebar = document.getElementById("sidebar");
   if(overlay){
-    overlay.onclick=()=>{
+    overlay.onclick = () => {
       if(sidebar) sidebar.classList.remove("open");
-      overlay.style.display="none";
-    }; // <-- هنا تم إغلاق القوس المكسور للأونكليك
+      overlay.style.display = "none";
+    };
   }
-}); // <-- هنا تم إغلاق القوس المكسور للـ DOMContentLoaded
+});
 
 function toggleSidebar() {
     const sidebar = document.getElementById("sidebar");
     const overlay = document.getElementById("overlay");
+    if(!sidebar) return;
     
-    if(sidebar) sidebar.classList.toggle("open");
-    
-    if (sidebar && sidebar.classList.contains("open")) {
-        if(overlay) overlay.style.display = "block";
-    } else {
-        if(overlay) overlay.style.display = "none";
+    sidebar.classList.toggle("open");
+    if (overlay) {
+        if (sidebar.classList.contains("open")) {
+            overlay.style.display = "block";
+        } else {
+            overlay.style.display = "none";
+        }
     }
 }
 
@@ -1674,7 +1675,7 @@ setInterval(() => {
     if (typeof loadOrders === "function") loadOrders();
   }
   let paymentsPage = document.getElementById("paymentsPage");
-  if(paymentsPage && paymentsPage.style.display!=="none"){
+  if(paymentsPage && paymentsPage.style.display !== "none"){
     if (typeof loadPayments === "function") loadPayments();
   }
   if (typeof syncData === "function") syncData();
@@ -1786,4 +1787,4 @@ function confirmBuy() {
   </div>
 </div>
 </body>
-</html>
+</html
