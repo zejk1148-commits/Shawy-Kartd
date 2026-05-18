@@ -1918,6 +1918,32 @@ async function loadAdminApps() {
         </tr>
     `).join('');
 }
+// 7. حذف التطبيق
+async function deleteApp(id) {
+    if (!confirm("هل أنت متأكد من رغبتك في حذف هذه الحزمة؟")) return;
+
+    try {
+        const { error } = await supabase
+            .from('apps')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+
+        alert("✅ تم الحذف بنجاح.");
+        loadAdminApps();
+        fetchAppsFromDatabase(); 
+    } catch (error) {
+        console.error("عطل بالحذف:", error);
+    }
+}
+
+// الاستدقاء التلقائي الآمن والمباشر لجلب البيانات
+setTimeout(() => {
+    if (typeof fetchAppsFromDatabase === "function") fetchAppsFromDatabase();
+    if (typeof loadAdminApps === "function") loadAdminApps();
+}, 1500);
+
 async function addNewApp() {
     const name = document.getElementById("newAppName").value.trim();
     const quantity = parseFloat(document.getElementById("newAppQuantity").value);
@@ -1951,32 +1977,6 @@ async function addNewApp() {
         alert("⚠️ واجهنا مشكلة تقنية، تأكد من إيقاف الـ RLS لجدول shawy-kartd.");
     }
 }
-// 7. حذف التطبيق
-async function deleteApp(id) {
-    if (!confirm("هل أنت متأكد من رغبتك في حذف هذه الحزمة؟")) return;
-
-    try {
-        const { error } = await supabase
-            .from('apps')
-            .delete()
-            .eq('id', id);
-
-        if (error) throw error;
-
-        alert("✅ تم الحذف بنجاح.");
-        loadAdminApps();
-        fetchAppsFromDatabase(); 
-    } catch (error) {
-        console.error("عطل بالحذف:", error);
-    }
-}
-
-// الاستدقاء التلقائي الآمن والمباشر لجلب البيانات
-setTimeout(() => {
-    if (typeof fetchAppsFromDatabase === "function") fetchAppsFromDatabase();
-    if (typeof loadAdminApps === "function") loadAdminApps();
-}, 1500);
-
 
 </script>
 
