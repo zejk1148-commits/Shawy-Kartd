@@ -534,10 +534,10 @@ height:80px;
       <label style="display:block; font-size:12px; color:#aaa; margin-bottom:8px; text-align: right;">السعر ($)</label>
       <input type="number" id="newAppPrice" step="0.01" placeholder="0.00" style="width:100%; padding:12px; background:#252525; border:1px solid #333; color:white; border-radius:8px; outline: none; text-align: center;">
     </div>
-    <div style="flex: 2; min-width: 200px;">
-      <label style="display:block; font-size:12px; color:#aaa; margin-bottom:8px; text-align: right;">شعار التطبيق (صورة)</label>
-      <input type="file" id="newAppImage" accept="image/*" style="width:100%; padding:9px; background:#252525; border:1px solid #333; color:white; border-radius:8px; outline: none;">
-    </div>
+<div style="flex: 2; min-width: 200px;">
+    <label style="display:block; font-size:12px; color:#aaa; margin-bottom:8px; text-align: right;">رابط صورة التطبيق (رابط مباشر)</label>
+    <input type="text" id="newAppImageUrl" placeholder="ضع رابط الصورة هنا (مثال من imgbb)" style="width:100%; padding:12px; background:#252525; border:1px solid #333; color: white; border-radius: 8px;">
+</div>
     <div style="width: 100%; margin-top: 10px;">
       <button onclick="addNewApp()" style="background: linear-gradient(to right, #d4af37, #f2d06b); color: black; border: none; padding: 12px 30px; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; width: 100%;">إدراج وتفعيل بالمتجر ➕</button>
     </div>
@@ -1918,60 +1918,42 @@ async function loadAdminApps() {
         </tr>
     `).join('');
 }
-// 6. رفع الصورة وحفظ البيانات بالكمية والسعر مباشرة داخل مجلد avatars
+// 6. إضافة الحزمة مباشرة إلى الجدول عبر الرابط لتخطي قيود الـ Storage المعقدة
 async function addNewApp() {
     const name = document.getElementById("newAppName").value.trim();
     const quantity = parseFloat(document.getElementById("newAppQuantity").value);
     const price = parseFloat(document.getElementById("newAppPrice").value);
-    const imageFile = document.getElementById("newAppImage").files[0];
+    const imageUrl = document.getElementById("newAppImageUrl").value.trim();
 
-    if (!name || isNaN(quantity) || isNaN(price) || !imageFile) {
-        alert("⚠️ يرجى تعبئة كافة الحقول باحترافية واختيار الصورة.");
+    if (!name || isNaN(quantity) || isNaN(price) || !imageUrl) {
+        alert("⚠️ يرجى تعبئة كافة الحقول باحترافية ووضع رابط الصورة.");
         return;
     }
 
     try {
-        const fileExt = imageFile.name.split('.').pop();
-        const fileName = `app_${Date.now()}.${fileExt}`;
-        const filePath = `${fileName}`; // رفع الملف مباشرة في المجلد الرئيسي
-
-        // الرفع المباشر داخل مجلدك المفتوح والموجود بسوبابيس فعلياً
-        let { error: uploadError } = await supabase.storage
-            .from('avatars') 
-            .upload(filePath, imageFile);
-
-        if (uploadError) throw uploadError;
-
-        // جلب الرابط العام للصورة المرفوعة
-        const { data: urlData } = supabase.storage
-            .from('avatars')
-            .getPublicUrl(filePath);
-
-        const imageUrl = urlData.publicUrl;
-
-        // إدخال الحزمة الجديدة في جدول قاعدة البيانات apps
+        // إدخال مباشر في جدول قاعدة البيانات وحروف صغيرة كاملة 'apps'
         const { error: insertError } = await supabase
             .from('apps')
             .insert([{ name: name, quantity: quantity, price: price, image_url: imageUrl }]);
 
         if (insertError) throw insertError;
 
-        alert("✅ تم إضافة الحزمة بنجاح وتفعيلها بالمتجر!");
+        alert("✅ تم إضافة الحزمة وتفعيلها بالمتجر بنجاح فائق!");
         
+        // تفريغ الحقول بعد النجاح
         document.getElementById("newAppName").value = "";
         document.getElementById("newAppQuantity").value = "";
         document.getElementById("newAppPrice").value = "";
-        document.getElementById("newAppImage").value = "";
+        document.getElementById("newAppImageUrl").value = "";
         
         loadAdminApps();
         fetchAppsFromDatabase(); 
 
     } catch (error) {
-        console.error("عطل بالرفع والإضافة:", error);
-        alert("⚠️ واجهنا مشكلة أثناء معالجة الطلب، يرجى مراجعة صلاحيات الجدول أو التخزين.");
+        console.error("عطل أثناء الإضافة بالجدول:", error);
+        alert("⚠️ واجهنا مشكلة أثناء إدخال البيانات، يرجى التأكد من إعدادات جدول apps في سوبابيس.");
     }
 }
-
 // 7. حذف التطبيق
 async function deleteApp(id) {
     if (!confirm("هل أنت متأكد من رغبتك في حذف هذه الحزمة؟")) return;
