@@ -1989,14 +1989,12 @@ async function deleteApp(id) {
         console.error("عطل بالحذف:", error);
     }
 }
+// الاستدعاء التلقائي الآمن والمباشر لجلب البيانات
+setTimeout(() => {
+    if (typeof fetchAppsFromDatabase === "function") fetchAppsFromDatabase();
+    if (typeof loadAdminApps === "function") loadAdminApps();
+}, 1500);
 
-// تشغيل جلب البيانات تلقائياً للمتجر واللوحة عند جاهزية الصفحة
-document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-        fetchAppsFromDatabase();
-        loadAdminApps();
-    }, 1000);
-});
 
 </script>
 
