@@ -1918,7 +1918,6 @@ async function loadAdminApps() {
         </tr>
     `).join('');
 }
-// 6. إضافة الحزمة مباشرة إلى الجدول عبر الرابط لتخطي قيود الـ Storage المعقدة
 async function addNewApp() {
     const name = document.getElementById("newAppName").value.trim();
     const quantity = parseFloat(document.getElementById("newAppQuantity").value);
@@ -1931,16 +1930,14 @@ async function addNewApp() {
     }
 
     try {
-        // إدخال مباشر في جدول قاعدة البيانات وحروف صغيرة كاملة 'apps'
         const { error: insertError } = await supabase
-            .from('apps')
+            .from('shawy-kartd')
             .insert([{ name: name, quantity: quantity, price: price, image_url: imageUrl }]);
 
         if (insertError) throw insertError;
 
-        alert("✅ تم إضافة الحزمة وتفعيلها بالمتجر بنجاح فائق!");
+        alert("✅ تم حفظ التعديلات وإرسال البيانات للجدول الجديد بنجاح فائق!");
         
-        // تفريغ الحقول بعد النجاح
         document.getElementById("newAppName").value = "";
         document.getElementById("newAppQuantity").value = "";
         document.getElementById("newAppPrice").value = "";
@@ -1950,8 +1947,8 @@ async function addNewApp() {
         fetchAppsFromDatabase(); 
 
     } catch (error) {
-        console.error("عطل أثناء الإضافة بالجدول:", error);
-        alert("⚠️ واجهنا مشكلة أثناء إدخال البيانات، يرجى التأكد من إعدادات جدول apps في سوبابيس.");
+        console.error("عطل أثناء الحفظ بالجدول الجديد:", error);
+        alert("⚠️ واجهنا مشكلة تقنية، تأكد من إيقاف الـ RLS لجدول shawy-kartd.");
     }
 }
 // 7. حذف التطبيق
