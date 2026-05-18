@@ -1918,8 +1918,7 @@ async function loadAdminApps() {
         </tr>
     `).join('');
 }
-
-// 6. رفع الصورة وحفظ البيانات بالكمية والسعر
+// 6. رفع الصورة وحفظ البيانات بالكمية والسعر (نسخة مطابقة لقاعدة بياناتك)
 async function addNewApp() {
     const name = document.getElementById("newAppName").value.trim();
     const quantity = parseFloat(document.getElementById("newAppQuantity").value);
@@ -1936,18 +1935,28 @@ async function addNewApp() {
         const fileName = `app_${Date.now()}.${fileExt}`;
         const filePath = `apps_logos/${fileName}`;
 
+        // محاولة جلب اسم المجلد المتاح تلقائياً
+        let bucketName = 'signatures'; 
+        try {
+            const { data: buckets } = await supabase.storage.listBuckets();
+            if (buckets && buckets.length > 0) {
+                bucketName = buckets[0].name;
+            }
+        } catch(e) { console.log("استخدام المجلد الافتراضي"); }
+
         let { error: uploadError } = await supabase.storage
-            .from('signatures') 
+            .from(bucketName) 
             .upload(filePath, imageFile);
 
         if (uploadError) throw uploadError;
 
         const { data: urlData } = supabase.storage
-            .from('signatures')
+            .from(bucketName)
             .getPublicUrl(filePath);
 
         const imageUrl = urlData.publicUrl;
 
+        // تعديل اسم الجدول ليكون بحروف صغيرة كاملة 'apps' ليطابق قاعدة بياناتك
         const { error: insertError } = await supabase
             .from('apps')
             .insert([{ name: name, quantity: quantity, price: price, image_url: imageUrl }]);
@@ -1966,11 +1975,11 @@ async function addNewApp() {
 
     } catch (error) {
         console.error("عطل بالرفع والإضافة:", error);
-        alert("⚠️ واجهنا مشكلة أثناء معالجة الطلب.");
+        alert("⚠️ واجهنا مشكلة أثناء معالجة الطلب، تأكد من إعدادات الـ Storage أو اسم الجدول.");
     }
 }
 
-// 7. حذف التطبيق
+// 7. حذف التطبيق (تعديل اسم الجدول لحروف صغيرة)
 async function deleteApp(id) {
     if (!confirm("هل أنت متأكد من رغبتك في حذف هذه الحزمة؟")) return;
 
@@ -1989,12 +1998,12 @@ async function deleteApp(id) {
         console.error("عطل بالحذف:", error);
     }
 }
-// الاستدعاء التلقائي الآمن والمباشر لجلب البيانات
+
+// الاستدقاء التلقائي الآمن والمباشر لجلب البيانات
 setTimeout(() => {
     if (typeof fetchAppsFromDatabase === "function") fetchAppsFromDatabase();
     if (typeof loadAdminApps === "function") loadAdminApps();
 }, 1500);
-
 
 </script>
 
