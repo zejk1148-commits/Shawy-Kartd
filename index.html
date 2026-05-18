@@ -1797,10 +1797,11 @@ function confirmBuy() {
     closePopup();
   }
 }
-  let apps = []; // مصفوفة المنتجات المسحوبة من سوبابيس
-let selectedAppIndex = null;
+// الكود المصلح والمتوافق تماماً مع دوال موقعك الحالية
+let storeProducts = []; 
+let currentSelectedProductIndex = null;
 
-// 1. جلب المنتجات (الحزم) من قاعدة البيانات وعرضها بالمتجر ديناميكياً
+// 1. جلب المنتجات من سوبابيس وعرضها في حاوية المتجر (appsGrid)
 async function fetchAppsFromDatabase() {
     try {
         const { data, error } = await supabase
@@ -1811,7 +1812,7 @@ async function fetchAppsFromDatabase() {
         if (error) throw error;
 
         if (data) {
-            apps = data;
+            storeProducts = data;
             renderStoreApps();
         }
     } catch (err) {
@@ -1819,17 +1820,17 @@ async function fetchAppsFromDatabase() {
     }
 }
 
-// 2. بناء كروت المتجر الفخمة وإظهار اسم الحزمة وسعرها والكمية
+// 2. بناء الكروت ديناميكياً لتتوافق مع دالة الشراء عندك
 function renderStoreApps() {
-    const container = document.getElementById("appsGrid"); // المعرف المعتمد عندك في السطر 492
+    const container = document.getElementById("appsGrid"); // السطر 492 عندك
     if (!container) return;
 
-    if (apps.length === 0) {
+    if (storeProducts.length === 0) {
         container.innerHTML = `<p style="color: #aaa; grid-column: span 2; text-align: center; padding: 20px;">لا يوجد حزم معروضة حالياً.</p>`;
         return;
     }
 
-    container.innerHTML = apps.map((app, index) => `
+    container.innerHTML = storeProducts.map((app, index) => `
         <div class="card" style="background: #111; border: 1px solid #d4af37; border-radius: 15px; padding: 15px; text-align: center; position: relative; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
             <div style="position: absolute; top: 10px; right: 10px; background: #b8860b; color: black; padding: 2px 8px; border-radius: 5px; font-size: 11px; font-weight: bold;">
                 $${parseFloat(app.price).toFixed(2)}
@@ -1837,61 +1838,60 @@ function renderStoreApps() {
             <img src="${app.image_url}" style="width: 80px; height: 80px; border-radius: 12px; object-fit: cover; margin-bottom: 10px; border: 1px solid #333;">
             <h3 style="color: #d4af37; font-size: 16px; margin: 5px 0 5px 0;">${app.name}</h3>
             <p style="color: #aaa; font-size: 13px; margin-bottom: 15px;">الكمية الأساسية: ${app.quantity || 1}</p>
-            <button onclick="openBuyPopup(${index})" style="width: 100%; background: linear-gradient(to right, #d4af37, #f2d06b); color: black; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer;">
+            <button onclick="prepareBuyPage(${index})" style="width: 100%; background: linear-gradient(to right, #d4af37, #f2d06b); color: black; border: none; padding: 10px; border-radius: 10px; font-weight: bold; cursor: pointer;">
                 اشحن الآن ✨
             </button>
         </div>
     `).join('');
 }
 
-// 3. فتح نافذة الشراء المنبثقة وتجهيز الحسابات التلقائية بناءً على المنتج المختار
-function openBuyPopup(index) {
-    selectedAppIndex = index;
-    const app = apps[index];
+// 3. تجهيز صفحة الشراء عند الضغط على الكرت
+function prepareBuyPage(index) {
+    currentSelectedProductIndex = index;
+    const app = storeProducts[index];
     
-    // ربط العناصر الحالية في صفحة الشراء (الأسطر 574 وما بعدها)
-    const titleElement = document.getElementById("title"); 
-    const amountInput = document.getElementById("appAmount"); 
-    const priceDisplay = document.getElementById("appPrice"); 
+    const titleElement = document.getElementById("title"); // السطر 529
+    const amountInput = document.getElementById("appAmount"); // السطر 537
+    const priceDisplay = document.getElementById("appPrice"); // السطر 540
 
     if (titleElement) {
         titleElement.innerText = `${app.name} (${app.quantity || 1})`;
     }
     
     if (amountInput) {
-        amountInput.value = 1; // تعيين العدد الافتراضي عند الفتح ليكون طلب واحد
+        amountInput.value = 1; 
     }
 
-    calculateAppPrice(); // تشغيل دالة الحساب الفوري للسعر عند الفتح
+    // حساب السعر الأولي للقطعة الواحدة
+    if (priceDisplay) {
+        priceDisplay.innerText = parseFloat(app.price).toFixed(2);
+    }
 
-    // تنقل الصفحات المعتمد بموقعك لإظهار صفحة الشراء
+    // منطق التنقل الخاص بموقعك لفتح صفحة الشراء (appPage)
     const homePage = document.getElementById("home");
     const appPage = document.getElementById("appPage");
     if (homePage) homePage.style.display = "none";
     if (appPage) appPage.style.display = "block"; 
 }
 
-// 4. دالة الحساب التلقائي والذكي للسعر بناءً على العدد المطلوب
+// 4. الدالة البديلة المتوافقة مع الـ oninput المكتوب بالسطر 537 بملفك
 function calculateAppPrice() {
-    if (selectedAppIndex === null) return;
+    if (currentSelectedProductIndex === null) return;
     
-    const app = apps[selectedAppIndex];
+    const app = storeProducts[currentSelectedProductIndex];
     const amountInput = document.getElementById("appAmount");
     const priceDisplay = document.getElementById("appPrice");
 
     if (!amountInput || !priceDisplay) return;
 
     let count = parseInt(amountInput.value);
-    if (isNaN(count) || count < 1) {
-        count = 1;
-    }
+    if (isNaN(count) || count < 1) count = 1;
 
-    // حساب السعر الإجمالي = السعر من سوبابيس × عدد المرات المطلوبة
     const totalPrice = app.price * count;
     priceDisplay.innerText = totalPrice.toFixed(2);
 }
 
-// 5. جلب وعرض التطبيقات داخل جدول لوحة الآدمن (محدث بالكمية)
+// 5. جلب وعرض التطبيقات داخل جدول لوحة الآدمن
 async function loadAdminApps() {
     const tableBody = document.getElementById("adminAppsTableBody");
     if (!tableBody) return;
@@ -1919,7 +1919,7 @@ async function loadAdminApps() {
     `).join('');
 }
 
-// 6. رفع الصورة وحفظ بيانات التطبيق والكمية في سوبابيس
+// 6. رفع الصورة وحفظ البيانات بالكمية والسعر
 async function addNewApp() {
     const name = document.getElementById("newAppName").value.trim();
     const quantity = parseFloat(document.getElementById("newAppQuantity").value);
@@ -1927,7 +1927,7 @@ async function addNewApp() {
     const imageFile = document.getElementById("newAppImage").files[0];
 
     if (!name || isNaN(quantity) || isNaN(price) || !imageFile) {
-        alert("⚠️ يرجى تعبئة كافة الحقول (الاسم، الكمية، السعر، واختيار الصورة).");
+        alert("⚠️ يرجى تعبئة كافة الحقول باحترافية واختيار الصورة.");
         return;
     }
 
@@ -1948,14 +1948,13 @@ async function addNewApp() {
 
         const imageUrl = urlData.publicUrl;
 
-        // إدخال السجل الجديد متضمناً الكمية الجديدة
         const { error: insertError } = await supabase
             .from('apps')
             .insert([{ name: name, quantity: quantity, price: price, image_url: imageUrl }]);
 
         if (insertError) throw insertError;
 
-        alert("✅ تم إضافة الحزمة بنجاح وربطها بالمتجر!");
+        alert("✅ تم إضافة الحزمة وتفعيلها بالمتجر!");
         
         document.getElementById("newAppName").value = "";
         document.getElementById("newAppQuantity").value = "";
@@ -1963,7 +1962,7 @@ async function addNewApp() {
         document.getElementById("newAppImage").value = "";
         
         loadAdminApps();
-        fetchAppsFromDatabase(); // تحديث كروت المتجر فوراً
+        fetchAppsFromDatabase(); 
 
     } catch (error) {
         console.error("عطل بالرفع والإضافة:", error);
@@ -1971,9 +1970,9 @@ async function addNewApp() {
     }
 }
 
-// 7. حذف التطبيق نهائياً
+// 7. حذف التطبيق
 async function deleteApp(id) {
-    if (!confirm("هل أنت متأكد من رغبتك في مسح هذا التطبيق من قاعدة البيانات؟")) return;
+    if (!confirm("هل أنت متأكد من رغبتك في حذف هذه الحزمة؟")) return;
 
     try {
         const { error } = await supabase
@@ -1988,17 +1987,15 @@ async function deleteApp(id) {
         fetchAppsFromDatabase(); 
     } catch (error) {
         console.error("عطل بالحذف:", error);
-        alert("⚠️ تعذر حذف التطبيق.");
     }
 }
 
-// تشغيل جلب البيانات للمتجر والآدمن تلقائياً عند تحميل الصفحة
+// تشغيل جلب البيانات تلقائياً للمتجر واللوحة عند جاهزية الصفحة
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof initSupabase === "function") initSupabase();
     setTimeout(() => {
         fetchAppsFromDatabase();
         loadAdminApps();
-    }, 1200);
+    }, 1000);
 });
 
 </script>
