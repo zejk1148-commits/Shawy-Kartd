@@ -1918,7 +1918,7 @@ async function loadAdminApps() {
         </tr>
     `).join('');
 }
-// 6. رفع الصورة وحفظ البيانات بالكمية والسعر (نسخة مطابقة لقاعدة بياناتك)
+// 6. رفع الصورة وحفظ البيانات بالكمية والسعر مباشرة داخل مجلد avatars
 async function addNewApp() {
     const name = document.getElementById("newAppName").value.trim();
     const quantity = parseFloat(document.getElementById("newAppQuantity").value);
@@ -1933,37 +1933,30 @@ async function addNewApp() {
     try {
         const fileExt = imageFile.name.split('.').pop();
         const fileName = `app_${Date.now()}.${fileExt}`;
-        const filePath = `apps_logos/${fileName}`;
+        const filePath = `${fileName}`; // رفع الملف مباشرة في المجلد الرئيسي
 
-        // محاولة جلب اسم المجلد المتاح تلقائياً
-        let bucketName = 'signatures'; 
-        try {
-            const { data: buckets } = await supabase.storage.listBuckets();
-            if (buckets && buckets.length > 0) {
-                bucketName = buckets[0].name;
-            }
-        } catch(e) { console.log("استخدام المجلد الافتراضي"); }
-
+        // الرفع المباشر داخل مجلدك المفتوح والموجود بسوبابيس فعلياً
         let { error: uploadError } = await supabase.storage
-            .from(bucketName) 
+            .from('avatars') 
             .upload(filePath, imageFile);
 
         if (uploadError) throw uploadError;
 
+        // جلب الرابط العام للصورة المرفوعة
         const { data: urlData } = supabase.storage
-            .from(bucketName)
+            .from('avatars')
             .getPublicUrl(filePath);
 
         const imageUrl = urlData.publicUrl;
 
-        // تعديل اسم الجدول ليكون بحروف صغيرة كاملة 'apps' ليطابق قاعدة بياناتك
+        // إدخال الحزمة الجديدة في جدول قاعدة البيانات apps
         const { error: insertError } = await supabase
             .from('apps')
             .insert([{ name: name, quantity: quantity, price: price, image_url: imageUrl }]);
 
         if (insertError) throw insertError;
 
-        alert("✅ تم إضافة الحزمة وتفعيلها بالمتجر!");
+        alert("✅ تم إضافة الحزمة بنجاح وتفعيلها بالمتجر!");
         
         document.getElementById("newAppName").value = "";
         document.getElementById("newAppQuantity").value = "";
@@ -1975,11 +1968,11 @@ async function addNewApp() {
 
     } catch (error) {
         console.error("عطل بالرفع والإضافة:", error);
-        alert("⚠️ واجهنا مشكلة أثناء معالجة الطلب، تأكد من إعدادات الـ Storage أو اسم الجدول.");
+        alert("⚠️ واجهنا مشكلة أثناء معالجة الطلب، يرجى مراجعة صلاحيات الجدول أو التخزين.");
     }
 }
 
-// 7. حذف التطبيق (تعديل اسم الجدول لحروف صغيرة)
+// 7. حذف التطبيق
 async function deleteApp(id) {
     if (!confirm("هل أنت متأكد من رغبتك في حذف هذه الحزمة؟")) return;
 
@@ -2004,6 +1997,7 @@ setTimeout(() => {
     if (typeof fetchAppsFromDatabase === "function") fetchAppsFromDatabase();
     if (typeof loadAdminApps === "function") loadAdminApps();
 }, 1500);
+
 
 </script>
 
