@@ -1918,27 +1918,28 @@ async function loadAdminApps() {
         </tr>
     `).join('');
 }
-// 7. حذف التطبيق
+
+// حذف التطبيق //
 async function deleteApp(id) {
     if (!confirm("هل أنت متأكد من رغبتك في حذف هذه الحزمة؟")) return;
 
     try {
         const { error } = await supabase
-            .from('apps')
+            .from('shawy-kartd') // تم التعديل هنا ليحذف من جدولك الجديد
             .delete()
             .eq('id', id);
 
         if (error) throw error;
 
-        alert("✅ تم الحذف بنجاح.");
+        alert("✅ تم الحذف بنجاح!");
         loadAdminApps();
-        fetchAppsFromDatabase(); 
+        fetchAppsFromDatabase();
     } catch (error) {
         console.error("عطل بالحذف:", error);
     }
 }
 
-// الاستدقاء التلقائي الآمن والمباشر لجلب البيانات
+// الاستدعاء التلقائي للأدمن والمباشر لجلب البيانات //
 setTimeout(() => {
     if (typeof fetchAppsFromDatabase === "function") fetchAppsFromDatabase();
     if (typeof loadAdminApps === "function") loadAdminApps();
@@ -1946,7 +1947,7 @@ setTimeout(() => {
 
 async function addNewApp() {
     const name = document.getElementById("newAppName").value.trim();
-    const quantity = parseFloat(document.getElementById("newAppQuantity").value);
+    const quantity = parseFloat(document.getElementById("newQuantity").value); // تم تصحيح الحقل هنا
     const price = parseFloat(document.getElementById("newAppPrice").value);
     const imageUrl = document.getElementById("newAppImageUrl").value.trim();
 
@@ -1957,7 +1958,7 @@ async function addNewApp() {
 
     try {
         const { error: insertError } = await supabase
-            .from('shawy-kartd')
+            .from('shawy-kartd') // تم التعديل ليرسل لجدولك الجديد
             .insert([{ name: name, quantity: quantity, price: price, image_url: imageUrl }]);
 
         if (insertError) throw insertError;
@@ -1965,7 +1966,7 @@ async function addNewApp() {
         alert("✅ تم حفظ التعديلات وإرسال البيانات للجدول الجديد بنجاح فائق!");
         
         document.getElementById("newAppName").value = "";
-        document.getElementById("newAppQuantity").value = "";
+        document.getElementById("newQuantity").value = ""; // تم التصحيح هنا أيضاً
         document.getElementById("newAppPrice").value = "";
         document.getElementById("newAppImageUrl").value = "";
         
