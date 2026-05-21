@@ -1917,15 +1917,13 @@ async function loadAdminApps() {
             </td>
         </tr>
     `).join('');
-} 
-  
 // حذف التطبيق //
 async function deleteApp(id) {
     if (!confirm("هل أنت متأكد من رغبتك في حذف هذه الحزمة؟")) return;
 
     try {
         const { error } = await supabase
-            .from('shawy-kartd') // تم التعديل هنا ليحذف من جدولك الجديد
+            .from('shawy-kartd')
             .delete()
             .eq('id', id);
 
@@ -1947,9 +1945,10 @@ setTimeout(() => {
 
 async function addNewApp() {
     const name = document.getElementById("newAppName").value.trim();
-    const quantity = parseFloat(document.getElementById("newQuantity").value); // تم تصحيح الحقل هنا
+    const quantity = parseFloat(document.getElementById("newQuantity").value);
     const price = parseFloat(document.getElementById("newAppPrice").value);
-    const imageUrl = document.getElementById("newAppImageUrl").value.trim();
+    // تم تصحيح المعرّف هنا بإضافة رقم 1 ليتطابق مع الـ HTML الخاص بملفك
+    const imageUrl = document.getElementById("newAppImageUrl1").value.trim();
 
     if (!name || isNaN(quantity) || isNaN(price) || !imageUrl) {
         alert("⚠️ يرجى تعبئة كافة الحقول باحترافية ووضع رابط الصورة.");
@@ -1958,7 +1957,7 @@ async function addNewApp() {
 
     try {
         const { error: insertError } = await supabase
-            .from('shawy-kartd') // تم التعديل ليرسل لجدولك الجديد
+            .from('shawy-kartd')
             .insert([{ name: name, quantity: quantity, price: price, image_url: imageUrl }]);
 
         if (insertError) throw insertError;
@@ -1966,9 +1965,9 @@ async function addNewApp() {
         alert("✅ تم حفظ التعديلات وإرسال البيانات للجدول الجديد بنجاح فائق!");
         
         document.getElementById("newAppName").value = "";
-        document.getElementById("newQuantity").value = ""; // تم التصحيح هنا أيضاً
+        document.getElementById("newQuantity").value = "";
         document.getElementById("newAppPrice").value = "";
-        document.getElementById("newAppImageUrl").value = "";
+        document.getElementById("newAppImageUrl1").value = "";
         
         loadAdminApps();
         fetchAppsFromDatabase(); 
