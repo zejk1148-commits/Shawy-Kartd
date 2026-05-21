@@ -1946,9 +1946,9 @@ setTimeout(() => {
 
 async function addNewApp() {
     const name = document.getElementById("newAppName").value.trim();
-    const quantity = parseFloat(document.getElementById("newQuantity").value);
-    const price = parseFloat(document.getElementById("newAppPrice").value);
-    const imageUrl = document.getElementById("newAppImageUrl1").value.trim();
+const quantity = parseFloat(document.getElementById("newAppQuantity").value);
+const price = parseFloat(document.getElementById("newAppPrice").value);
+const imageUrl = document.getElementById("newAppImageUrl").value.trim();
 
     if (!name || isNaN(quantity) || isNaN(price) || !imageUrl) {
         alert("⚠️ يرجى تعبئة كافة الحقول باحترافية ووضع رابط الصورة.");
