@@ -1917,7 +1917,7 @@ async function loadAdminApps() {
             </td>
         </tr>
     `).join('');
-
+// حذف التطبيق //
 async function deleteApp(id) {
     if (!confirm("هل أنت متأكد من رغبتك في حذف هذه الحزمة؟")) return;
 
@@ -1933,7 +1933,7 @@ async function deleteApp(id) {
         loadAdminApps();
         fetchAppsFromDatabase();
     } catch (error) {
-        console.error("عطل بالحذف:", error);
+        console.error(error);
     }
 }
 
@@ -1947,7 +1947,6 @@ async function addNewApp() {
     const name = document.getElementById("newAppName").value.trim();
     const quantity = parseFloat(document.getElementById("newQuantity").value);
     const price = parseFloat(document.getElementById("newAppPrice").value);
-    // تم تصحيح المعرّف هنا بإضافة رقم 1 ليتطابق مع الـ HTML الخاص بملفك
     const imageUrl = document.getElementById("newAppImageUrl1").value.trim();
 
     if (!name || isNaN(quantity) || isNaN(price) || !imageUrl) {
@@ -1973,7 +1972,7 @@ async function addNewApp() {
         fetchAppsFromDatabase(); 
 
     } catch (error) {
-        console.error("عطل أثناء الحفظ بالجدول الجديد:", error);
+        console.error(error);
         alert("⚠️ واجهنا مشكلة تقنية، تأكد من إيقاف الـ RLS لجدول shawy-kartd.");
     }
 }
