@@ -1945,10 +1945,11 @@ setTimeout(() => {
 }, 1500);
 
 async function addNewApp() {
-   const name = document.getElementById("newAppName").value.trim();
-const quantity = parseFloat(document.getElementById("newQuantity").value);
+const name = document.getElementById("newAppName").value.trim();
+const quantity = parseFloat(document.getElementById("newAppQuantity").value); 
 const price = parseFloat(document.getElementById("newAppPrice").value);
-const imageUrl = document.getElementById("newAppImageUrl1").value.trim();
+const imageUrl = document.getElementById("newAppImageUrl").value.trim();
+
     if (!name || isNaN(quantity) || isNaN(price) || !imageUrl) {
         alert("⚠️ يرجى تعبئة كافة الحقول باحترافية ووضع رابط الصورة.");
         return;
@@ -1962,10 +1963,10 @@ const imageUrl = document.getElementById("newAppImageUrl1").value.trim();
         if (insertError) throw insertError;
 
         alert("✅ تم حفظ التعديلات وإرسال البيانات للجدول الجديد بنجاح فائق!");
-        document.getElementById("newAppName").value = "";
-document.getElementById("newQuantity").value = "";
+document.getElementById("newAppName").value = "";
+document.getElementById("newAppQuantity").value = ""; 
 document.getElementById("newAppPrice").value = "";
-document.getElementById("newAppImageUrl1").value = "";
+document.getElementById("newAppImageUrl").value = "";
 
         
         loadAdminApps();
