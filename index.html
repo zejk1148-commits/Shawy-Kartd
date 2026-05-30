@@ -800,41 +800,45 @@ const apps=[
   {name:"صدفة",img:"https://i.ibb.co/gM9GsQbt/image.jpg"}, 
   {name:"توب توب",img:"https://i.ibb.co/gM9GsQbt/image.jpg"},
   {name:"هامي بارتي",img:"https://i.ibb.co/gM9GsQbt/image.jpg"},
-  {name:"هوني جار",img:"https://i.ibb.co/gM9GsQbt/image.jpg"}
-];
+  {name:"هوني جار",img:"https://i.ibb.co/gM9GsQbt/image.jpg"},
+  {name:"مولي ستار",img:"https://i.ibb.co/gM9GsQbt/image.jpg"},
+  {name:"هبي",img:"https://i.ibb.co/gM9GsQbt/image.jpg"},
+  {name:"هيو",img:"https://i.ibb.co/gM9GsQbt/image.jpg"},
+  {name:"هيا",img:"https://i.ibb.co/gM9GsQbt/image.jpg"}
+] ;
 
-let selectedApp="", selectedAmount=0, selectedPrice=0;
+let  selectedApp = "" , selectedAmount = 0 , selectedPrice = 0 ;
 
-async function register(){
-  const email = document.getElementById("regEmail").value.trim();
-  const password = document.getElementById("regPassword").value.trim();
-  const passwordConfirm = document.getElementById("regPasswordConfirm").value.trim();
+async  function  register ( ) {
+  const  email = document.getElementById ( " regEmail " ) . value.trim ( ) ;​​
+  const  password = document.getElementById ( " regPassword " ) . value.trim ( ) ;​​
+  const  passwordConfirm = document.getElementById ( " regPasswordConfirm " ) . value.trim ( ) ;​​
   
-  if(!email||!password||!passwordConfirm){
-    alert("❌ ادخل جميع الحقول");
-    return;
+  إذا لم يكن البريد الإلكتروني أو كلمة المرور أو تأكيد كلمة المرور موجودًا ،
+    تنبيه ( "❌ ادخل جميع الفرق" ) ;
+    يعود ؛
   }
   
-  if(password !== passwordConfirm){
-    alert("❌ كلمات المرور غير متطابقة");
-    return;
+  إذا كانت كلمة المرور لا تساوي كلمة المرور المؤكدة {
+    تنبيه ( "❌ كلمات المرور غير متطابقة" ) ;
+    يعود ؛
   }
   
-  if(password.length < 6){
-    alert("❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل");
-    return;
+  إذا كان طول كلمة المرور أقل من 6 أحرف {
+    تنبيه ( "❌ كلمة المرور يجب أن تكون 6 أحرف على الأقل" ) ;
+    يعود ؛
   }
   
-  try {
-    const { data, error } = await supabaseClient.auth.signUp({ email, password });
+  يحاول  {
+    const  {  data , error  } = await  supabaseClient . auth . signUp ( {  email , password  } ) ;
     
-    if(error) throw error;
+    إذا حدث خطأ ،  فقم برمي  الخطأ .
     
-    const code = Math.floor(1000 + Math.random() * 9000).toString();
-const { error: insertError } = await supabaseClient
-  .from("users")
-  .insert([{
-  user_id: data.user.id,
+    const  code = Math.floor ( 1000 + Math.random ( ) * 9000 ) .toString ( ) ;​​​​​
+const  {  error : insertError  } = await  supabaseClient
+  من ( " المستخدمين" )
+  . إدراج ( [ {
+  user_id : data . user . id ,
   email: email,
   name: email.split('@')[0],
   code: code,
